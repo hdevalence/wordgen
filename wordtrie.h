@@ -10,6 +10,7 @@
 #define WORDTRIE_H
 
 #include <stdint.h>
+#include <stdbool.h>
 
 #define NUMCHARS 95
 
@@ -22,6 +23,16 @@ struct wordtrie_node {
     uint64_t children_freq;
 };
 typedef struct wordtrie_node wordtrie_node;
+
+/*
+ * Check if a character is a valid trie key.
+ */
+inline bool valid_char(char c) {
+    char d = c - 32;
+    return (0 <= d && d <= 95);
+}
+
+bool valid_key(const char* str);
 
 /*
  * Add an entry to the trie.

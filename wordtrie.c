@@ -3,6 +3,17 @@
 #include <stdlib.h>
 #include <assert.h>
 
+extern inline bool valid_char(char c);
+
+bool valid_key(const char* str) {
+    while (*str) {
+        if (!valid_char(*str))
+            return false;
+        str++;
+    }
+    return true;
+}
+
 /* Hash function converting printable characters to indices 
  * TODO: efficiency can be improved by omitting unused chars.
  * 
@@ -10,11 +21,8 @@
  * but each pointer to a child node is 8x as large as a single character.
  */
 int ascii_index(char c) {
-    int i = c - 32;
-    if (i < 0 || i > 95)
-        return 0;
-    else
-        return i;
+    assert(valid_char(c));
+    return c - 32;
 }
 
 wordtrie_node* alloc_wordtrie() {
