@@ -68,6 +68,24 @@ void tagarray_sort(tagptr arr) {
     tagarray_qsort(arr,0,size-1);
 }
 
+tagptr tagarray_search(tagptr arr, uint16_t search_tag) {
+    int l = 0;
+    int r = tagarray_size(arr);
+    while (l < r) {
+        int mid = (l+r)/2;
+        uint16_t mid_tag = get_tag(tagarray_at(arr,mid));
+        if (search_tag == mid_tag) {
+            return tagarray_at(arr,mid);
+        } else if (mid_tag < search_tag) {
+            l = mid + 1;
+        } else {
+            r = mid - 1;
+        }
+    }
+    tagptr not_found = { .ptr = NULL };
+    return not_found;
+}
+
 void tagarray_pprint(tagptr arr) {
     int size = arr.bytes[7];
     int reserved = arr.bytes[6];

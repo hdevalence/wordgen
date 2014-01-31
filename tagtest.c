@@ -7,8 +7,8 @@ int main(int argc, char **argv) {
     arr.ptr = NULL;
     tagarray_pprint(arr);
     tagptr tmp;
-    tmp.ptr = malloc(16);
 
+    tmp.ptr = malloc(16);
     set_tag(&tmp,34);
     tagarray_push_back(&arr,tmp);
     tagarray_pprint(arr);
@@ -24,7 +24,7 @@ int main(int argc, char **argv) {
     tagarray_pprint(arr);
 
     tmp.ptr = malloc(16);
-    set_tag(&tmp,36);
+    set_tag(&tmp,99);
     tagarray_push_back(&arr,tmp);
     tagarray_pprint(arr);
 
@@ -34,6 +34,8 @@ int main(int argc, char **argv) {
     tagarray_pprint(arr);
 
     tagarray_sort(arr);
+    tagptr val = tagarray_search(arr, 99);
     tagarray_pprint(arr);
+    tagarray_pprint(val);
     return 0;
 }

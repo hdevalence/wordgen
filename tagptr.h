@@ -53,7 +53,7 @@ void tagarray_sort(tagptr arr);
  * Search a tagged array for the pointer with a given tag.
  * Assumed to be a presorted array.
  */
-//tagptr tagarray_search(tagptr arr, uint16_t searchtag);
+tagptr tagarray_search(tagptr arr, uint16_t searchtag);
 
 
 
