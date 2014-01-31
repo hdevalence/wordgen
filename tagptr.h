@@ -38,6 +38,10 @@ inline void tagarray_set(tagptr arr, int i, tagptr obj) {
     ((tagptr*)mask_ptr(arr))[i] = obj;
 }
 
+inline uint8_t tagarray_size(tagptr arr) {
+    return arr.bytes[7];
+}
+
 void tagarray_pprint(tagptr arr);
 
 /*

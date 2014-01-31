@@ -9,6 +9,7 @@ extern inline void set_tag(tagptr *p, uint16_t tag);
 extern inline uint16_t get_tag(tagptr p);
 extern inline tagptr tagarray_at(tagptr arr, int i);
 extern inline void tagarray_set(tagptr arr, int i, tagptr obj);
+extern inline uint8_t tagarray_size(tagptr arr);
 
 void tagarray_push_back(tagptr* arr, tagptr p) {
     uint8_t size = arr->bytes[7];
