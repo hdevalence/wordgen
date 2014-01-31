@@ -35,6 +35,16 @@ inline bool valid_char(char c) {
 bool valid_key(const char* str);
 
 /*
+ * Count number of nodes in trie.
+ */
+uint64_t count_children(wordtrie_node *root);
+
+/*
+ * Count number of null pointers to unused children.
+ */
+uint64_t count_null_leaves(wordtrie_node *root);
+
+/*
  * Add an entry to the trie.
  *
  * Warning: this function does not update the children_freqs
@@ -42,6 +52,11 @@ bool valid_key(const char* str);
  *          you finish adding data to the trie.
  */
 void add_entry(wordtrie_node *root, char *key, uint64_t freq);
+
+/*
+ * Get the node with path key or NULL if not found
+ */
+wordtrie_node* find_entry(wordtrie_node *root, char *key);
 
 /*
  * Compute tallies of subtree frequency totals for

@@ -51,6 +51,19 @@ void add_entry(wordtrie_node *root, char *key, uint64_t freq) {
     }
 }
 
+wordtrie_node* find_entry(wordtrie_node *root, char *key) {
+    if (!(*key))
+        return root;
+    else {
+        int i = ascii_index(*key);
+        wordtrie_node* child = root->children[i];
+        if (child)
+            return find_entry(child,key+1);
+        else
+            return NULL;
+    }
+}
+
 void compute_children_freqs(wordtrie_node *root) {
     for (int i = 0; i < NUMCHARS; ++i) {
         wordtrie_node *child = root->children[i];
@@ -60,6 +73,28 @@ void compute_children_freqs(wordtrie_node *root) {
             root->children_freq += child->children_freq;
         }
     }
+}
+
+uint64_t count_children(wordtrie_node *root) {
+    uint64_t count = 1;
+    for (int i = 0; i < NUMCHARS; ++i) {
+        wordtrie_node *child = root->children[i];
+        if (child)
+            count += count_children(child);
+    }
+    return count;
+}
+
+uint64_t count_null_leaves(wordtrie_node *root) {
+    uint64_t count = 0;
+    for (int i = 0; i < NUMCHARS; ++i) {
+        wordtrie_node *child = root->children[i];
+        if (child)
+            count += count_null_leaves(child);
+        else
+            count++;
+    }
+    return count;
 }
 
 void free_wordtrie(wordtrie_node *root) {
