@@ -3,10 +3,10 @@
 #include "stdlib.h"
 
 int main(int argc, char **argv) {
-    tagptr arr;
+    tagptr_t arr;
     arr.ptr = NULL;
     tagarray_pprint(arr);
-    tagptr tmp;
+    tagptr_t tmp;
 
     tmp.ptr = malloc(16);
     set_tag(&tmp,34);
@@ -34,7 +34,7 @@ int main(int argc, char **argv) {
     tagarray_pprint(arr);
 
     tagarray_sort(arr);
-    tagptr val = tagarray_search(arr, 99);
+    tagptr_t val = tagarray_search(arr, 99);
     tagarray_pprint(arr);
     tagarray_pprint(val);
     return 0;
