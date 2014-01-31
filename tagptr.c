@@ -89,13 +89,13 @@ tagptr tagarray_search(tagptr arr, uint16_t search_tag) {
 void tagarray_pprint(tagptr arr) {
     int size = arr.bytes[7];
     int reserved = arr.bytes[6];
-    printf("PPRINT 0x%16llX\n", (unsigned long long) arr.ptr);
+    printf("PPRINT 0x%0.16llX\n", (unsigned long long) arr.ptr);
     printf("  SIZE %d\n", size);
     printf("  RSVD %d\n", reserved);
     for(int i = 0; i < size; ++i) {
         tagptr p = tagarray_at(arr,i);
-        printf("\t%d\t0x%16llX\n", i, (unsigned long long) p.ptr);
+        printf("\t%d\t0x%0.16llX\n", i, (unsigned long long) p.ptr);
         printf("\t\tTAG\t%d\n", get_tag(p));
-        printf("\t\tVAL\t0x%16llX\n", (unsigned long long) mask_ptr(p));
+        printf("\t\tVAL\t0x%0.16llX\n", (unsigned long long) mask_ptr(p));
     }
 }
