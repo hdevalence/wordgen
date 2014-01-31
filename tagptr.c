@@ -65,7 +65,7 @@ void tagarray_qsort(tagptr arr, int l, int r) {
 
 void tagarray_sort(tagptr arr) {
     int size = arr.bytes[7];
-    tagarray_qsort(arr,0,size);
+    tagarray_qsort(arr,0,size-1);
 }
 
 void tagarray_pprint(tagptr arr) {
