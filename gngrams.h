@@ -7,6 +7,6 @@
  * Construct a word trie from a Google NGrams data set.
  */
 
-wtrie* build_trie(char *filepath);
+wtrie_t* build_trie(char *filepath);
 
 #endif

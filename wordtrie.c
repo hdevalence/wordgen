@@ -25,8 +25,8 @@ int ascii_index(char c) {
     return c - 32;
 }
 
-wtrie* alloc_wordtrie() {
-    wtrie *n = malloc(sizeof(wtrie));
+wtrie_t* alloc_wordtrie() {
+    wtrie_t *n = malloc(sizeof(wtrie_t));
     assert(n != NULL);
     for(int i = 0; i < NUMCHARS; ++i) {
         n->children[i] = NULL;
@@ -36,7 +36,7 @@ wtrie* alloc_wordtrie() {
     return n;
 }
 
-void add_entry(wtrie *root, char *key, uint64_t freq) {
+void add_entry(wtrie_t *root, char *key, uint64_t freq) {
     if (!(*key)) {
         /* If we're at the end of the key string, then root is 
          * actually the leaf for the given key. */
@@ -51,12 +51,12 @@ void add_entry(wtrie *root, char *key, uint64_t freq) {
     }
 }
 
-wtrie* find_entry(wtrie *root, char *key) {
+wtrie_t* find_entry(wtrie_t *root, char *key) {
     if (!(*key))
         return root;
     else {
         int i = ascii_index(*key);
-        wtrie* child = root->children[i];
+        wtrie_t* child = root->children[i];
         if (child)
             return find_entry(child,key+1);
         else
@@ -64,9 +64,9 @@ wtrie* find_entry(wtrie *root, char *key) {
     }
 }
 
-void compute_children_freqs(wtrie *root) {
+void compute_children_freqs(wtrie_t *root) {
     for (int i = 0; i < NUMCHARS; ++i) {
-        wtrie *child = root->children[i];
+        wtrie_t *child = root->children[i];
         if (child) {
             compute_children_freqs(child);
             root->children_freq += child->self_freq;
@@ -75,20 +75,20 @@ void compute_children_freqs(wtrie *root) {
     }
 }
 
-uint64_t count_children(wtrie *root) {
+uint64_t count_children(wtrie_t *root) {
     uint64_t count = 1;
     for (int i = 0; i < NUMCHARS; ++i) {
-        wtrie *child = root->children[i];
+        wtrie_t *child = root->children[i];
         if (child)
             count += count_children(child);
     }
     return count;
 }
 
-uint64_t count_null_leaves(wtrie *root) {
+uint64_t count_null_leaves(wtrie_t *root) {
     uint64_t count = 0;
     for (int i = 0; i < NUMCHARS; ++i) {
-        wtrie *child = root->children[i];
+        wtrie_t *child = root->children[i];
         if (child)
             count += count_null_leaves(child);
         else
@@ -97,7 +97,7 @@ uint64_t count_null_leaves(wtrie *root) {
     return count;
 }
 
-void free_wordtrie(wtrie *root) {
+void free_wordtrie(wtrie_t *root) {
     if (!root)
         return;
     for (int i = 0; i < NUMCHARS; ++i)

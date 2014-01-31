@@ -5,7 +5,7 @@
 
 int main(int argc, char **argv) {
     printf("Building trie\n");
-    wtrie *root = build_trie(argv[1]);
+    wtrie_t *root = build_trie(argv[1]);
     printf("Computing frequencies\n");
     compute_children_freqs(root);
 
@@ -16,7 +16,7 @@ int main(int argc, char **argv) {
             nullcount, sizeof(void*)*nullcount);
 
     if (argc > 2) {
-        wtrie *child = find_entry(root,argv[2]);
+        wtrie_t *child = find_entry(root,argv[2]);
         if (!child)
             printf("Search term %s not found\n", argv[2]);
         else

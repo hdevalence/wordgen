@@ -6,8 +6,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-wtrie* build_trie(char *filepath) {
-    wtrie* root = alloc_wordtrie();
+wtrie_t* build_trie(char *filepath) {
+    wtrie_t* root = alloc_wordtrie();
     char* line = NULL;
     size_t len = 0;
     ssize_t read;
