@@ -14,15 +14,15 @@
 
 #define NUMCHARS 95
 
-struct wordtrie_node {
+struct wtrie {
     // Array of children, possibly null (i.e., of type Maybe Node)
-    struct wordtrie_node* children[NUMCHARS];
+    struct wtrie* children[NUMCHARS];
     // Frequency of this node's word
     uint64_t self_freq;
     // Sum of frequencies of all child nodes.
     uint64_t children_freq;
 };
-typedef struct wordtrie_node wordtrie_node;
+typedef struct wtrie wtrie;
 
 /*
  * Check if a character is a valid trie key.
@@ -37,12 +37,12 @@ bool valid_key(const char* str);
 /*
  * Count number of nodes in trie.
  */
-uint64_t count_children(wordtrie_node *root);
+uint64_t count_children(wtrie *root);
 
 /*
  * Count number of null pointers to unused children.
  */
-uint64_t count_null_leaves(wordtrie_node *root);
+uint64_t count_null_leaves(wtrie *root);
 
 /*
  * Add an entry to the trie.
@@ -51,21 +51,21 @@ uint64_t count_null_leaves(wordtrie_node *root);
  *          so you should call compute_children_freqs after
  *          you finish adding data to the trie.
  */
-void add_entry(wordtrie_node *root, char *key, uint64_t freq);
+void add_entry(wtrie *root, char *key, uint64_t freq);
 
 /*
  * Get the node with path key or NULL if not found
  */
-wordtrie_node* find_entry(wordtrie_node *root, char *key);
+wtrie* find_entry(wtrie *root, char *key);
 
 /*
  * Compute tallies of subtree frequency totals for
  * computing CDFs.
  */
-void compute_children_freqs(wordtrie_node *root);
+void compute_children_freqs(wtrie *root);
 
-wordtrie_node* alloc_wordtrie();
-void free_wordtrie(wordtrie_node *root);
+wtrie* alloc_wordtrie();
+void free_wordtrie(wtrie *root);
 
 
 #endif
