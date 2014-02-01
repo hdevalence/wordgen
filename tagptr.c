@@ -33,6 +33,27 @@ void tagarray_push_back(tagptr_t* arr, tagptr_t p) {
     arr->bytes[7] = size;
 }
 
+void tagarray_insert(tagptr_t* arr, tagptr_t p) {
+    tagarray_push_back(arr,p);
+    // If we only have one element, no-op
+    if (tagarray_size(*arr) <= 1)
+        return;
+    /* Now p is at the end of arr: perform insertion sort.
+     * This is asymptotically bad (insertion sort on every addition)
+     * but all of our lists are quite small, so the constant
+     * factors may make the difference.
+     */
+    int i = tagarray_size(*arr) - 1;
+    while (i > 0) {
+        tagptr_t q = tagarray_at(*arr,i-1);
+        if( get_tag(q) > get_tag(p) ) {
+            tagarray_set(*arr,i,q);
+            --i;
+        } else break;
+    }
+    tagarray_set(*arr,i,p);
+}
+
 void tagarray_swap(tagptr_t arr, int i, int j) {
     tagptr_t tmp = tagarray_at(arr, i);
     tagarray_set(arr, i, tagarray_at(arr, j));

@@ -30,6 +30,9 @@ inline uint16_t get_tag(tagptr_t p) {
  */
 void tagarray_push_back(tagptr_t* arr, tagptr_t p);
 
+/* Like push_back, but maintains sort order. */
+void tagarray_insert(tagptr_t* arr, tagptr_t p);
+
 inline tagptr_t tagarray_at(tagptr_t arr, int i) {
     return ((tagptr_t*)mask_ptr(arr))[i];
 }
