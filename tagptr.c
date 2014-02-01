@@ -95,12 +95,12 @@ tagptr_t tagarray_search(tagptr_t arr, uint16_t search_tag) {
     while (l < r) {
         int mid = (l+r)/2;
         uint16_t mid_tag = get_tag(tagarray_at(arr,mid));
-        if (search_tag == mid_tag) {
-            return tagarray_at(arr,mid);
-        } else if (mid_tag < search_tag) {
+        if (mid_tag < search_tag) {
             l = mid + 1;
-        } else {
+        } else if (mid_tag > search_tag) {
             r = mid;
+        } else {
+            return tagarray_at(arr,mid);
         }
     }
     tagptr_t not_found = { .ptr = NULL };
