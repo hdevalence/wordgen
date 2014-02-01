@@ -120,7 +120,7 @@ void tagarray_pprint(tagptr_t arr) {
     for(int i = 0; i < size; ++i) {
         tagptr_t p = tagarray_at(arr,i);
         printf("\t%d\t0x%016llX\n", i, (unsigned long long) p.ptr);
-        printf("\t\tTAG\t%d\n", get_tag(p));
+        printf("\t\tTAG\t%d : %c\n", get_tag(p), (char)get_tag(p));
         printf("\t\tVAL\t0x%016llX\n", (unsigned long long) mask_ptr(p));
     }
 }

@@ -9,32 +9,32 @@ int main(int argc, char **argv) {
     tagptr_t tmp;
 
     tmp.ptr = malloc(16);
-    set_tag(&tmp,5);
+    set_tag(&tmp,'e');
     tagarray_insert(&arr,tmp);
     tagarray_pprint(arr);
 
     tmp.ptr = malloc(16);
-    set_tag(&tmp,3);
+    set_tag(&tmp,'b');
     tagarray_insert(&arr,tmp);
     tagarray_pprint(arr);
 
     tmp.ptr = malloc(16);
-    set_tag(&tmp,1);
+    set_tag(&tmp,'c');
     tagarray_insert(&arr,tmp);
     tagarray_pprint(arr);
 
     tmp.ptr = malloc(16);
-    set_tag(&tmp,2);
+    set_tag(&tmp,'a');
     tagarray_insert(&arr,tmp);
     tagarray_pprint(arr);
 
     tmp.ptr = malloc(16);
-    set_tag(&tmp,4);
+    set_tag(&tmp,'d');
     tagarray_insert(&arr,tmp);
     tagarray_pprint(arr);
 
     tagarray_sort(arr);
-    tagptr_t val = tagarray_search(arr, 4);
+    tagptr_t val = tagarray_search(arr, 'd');
     tagarray_pprint(arr);
     tagarray_pprint(val);
     return 0;
