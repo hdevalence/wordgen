@@ -8,6 +8,11 @@
 
 wtrie_t* build_trie(char *filepath) {
     wtrie_t* root = wtrie_alloc();
+    add_to_trie(root,filepath);
+    return root;
+}
+
+void add_to_trie(wtrie_t *root, char *filepath) {
     char* line = NULL;
     size_t len = 0;
     ssize_t read;
@@ -38,5 +43,4 @@ wtrie_t* build_trie(char *filepath) {
         nextline: continue;
     }
     free(line);
-    return root;
 }
