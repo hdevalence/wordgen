@@ -18,8 +18,12 @@ void tagarray_push_back(tagptr_t* arr, tagptr_t p) {
         //Resize array
         tagptr_t* raw_arr = (tagptr_t*)mask_ptr(*arr);
         int new_res = 2*reserved;
-        if (new_res > TAGARRAY_MAXLEN)
+        if (new_res > TAGARRAY_MAXLEN) {
             new_res = TAGARRAY_MAXLEN;
+            // Trying to expand the array past max size?
+            // You will have a bad day.
+            assert(size < TAGARRAY_MAXLEN);
+        }
         if (new_res == 0)
             new_res = 1;
         tagptr_t* new_arr = realloc(raw_arr, sizeof(tagptr_t)*new_res);
