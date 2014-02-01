@@ -7,7 +7,7 @@
 #include <string.h>
 
 wtrie_t* build_trie(char *filepath) {
-    wtrie_t* root = alloc_wordtrie();
+    wtrie_t* root = wtrie_alloc();
     char* line = NULL;
     size_t len = 0;
     ssize_t read;
@@ -18,7 +18,7 @@ wtrie_t* build_trie(char *filepath) {
         char *tab = line;
         //scan for tab and check that all ngram chars are ascii
         while (*tab != '\t') {
-            if (!valid_char(*tab))
+            if (!wtrie_valid_char(*tab))
                 goto nextline;
             ++tab;
         }
@@ -34,7 +34,7 @@ wtrie_t* build_trie(char *filepath) {
         //now it points to the delim after the frequency count
         *tab = 0;
         uint64_t freq = strtoull(freqstr,NULL,10);
-        add_entry(root,line,freq);
+        wtrie_add_entry(root,line,freq);
         nextline: continue;
     }
     free(line);

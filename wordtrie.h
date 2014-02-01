@@ -16,56 +16,85 @@
 
 #define NUMCHARS 95
 
+/*
+ * self_freq is the frequency count for the string which is this node's key.
+ * child_freq is the sum of the frequencies of all nodes below this one.
+ * child_arr is a tagged pointer array; see tagptr.h for details.
+ */
 struct wtrie_t {
-    // Tagged pointer array of children
     tagptr_t child_arr;
-    // Frequency of this node's word
     uint64_t self_freq;
-    // Sum of frequencies of all child nodes.
     uint64_t children_freq;
 };
 typedef struct wtrie_t wtrie_t;
 
+/***********************************************************************
+ *** Creation / Deletion
+ **/
+
+/*
+ * malloc a wtrie_t and initialize its data.
+ */
+wtrie_t* wtrie_alloc();
+
+/*
+ * Recursively free a tree.
+ */
+void wtrie_free(wtrie_t *root);
+
+/***********************************************************************
+ *** Usage
+ **/
+
 /*
  * Check if a character is a valid trie key.
+ * For now, we limit characters to printable ASCII.
  */
-inline bool valid_char(char c) {
+inline bool wtrie_valid_char(char c) {
     return (32 <= c && c <= 127);
 }
 
-bool valid_key(const char* str);
+/*
+ * Add an entry to the trie.
+ * Warning: this function does not update the children_freqs
+ *          so you should call compute_children_freqs after
+ *          you finish adding data to the trie.
+ */
+void wtrie_add_entry(wtrie_t *root, char *key, uint64_t freq);
+
+/*
+ * Get the node corresponding to key or NULL if not found.
+ */
+wtrie_t* wtrie_find_entry(wtrie_t *root, char *key);
+
+/*
+ * Compute child_freq totals.
+ */
+void wtrie_compute_freq(wtrie_t *root);
+
+/***********************************************************************
+ *** Miscellaneous information functions
+ **/
+
+/*
+ * Pretty-print a representation of the trie.
+ */
+void wtrie_pprint(wtrie_t *root);
 
 /*
  * Count number of nodes in trie.
  */
 uint64_t count_children(wtrie_t *root);
+
+/*
+ * Count leaves, i.e., nodes with self_freq > 0.
+ */
 uint64_t count_leaves(wtrie_t *root);
+
+/*
+ * Count the number of bytes allocated for child arrays but unused.
+ */
 uint64_t count_wasted_mem(wtrie_t *root);
-
-/*
- * Add an entry to the trie.
- *
- * Warning: this function does not update the children_freqs
- *          so you should call compute_children_freqs after
- *          you finish adding data to the trie.
- */
-void add_entry(wtrie_t *root, char *key, uint64_t freq);
-
-/*
- * Get the node with path key or NULL if not found
- */
-wtrie_t* find_entry(wtrie_t *root, char *key);
-
-/*
- * Compute tallies of subtree frequency totals for
- * computing CDFs.
- */
-void compute_children_freqs(wtrie_t *root);
-
-void wtrie_pprint(wtrie_t *root);
-
-wtrie_t* alloc_wordtrie();
-void free_wordtrie(wtrie_t *root);
 
 #endif
 

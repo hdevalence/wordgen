@@ -7,7 +7,7 @@ int main(int argc, char **argv) {
     printf("Building trie\n");
     wtrie_t *root = build_trie(argv[1]);
     printf("Computing frequencies\n");
-    compute_children_freqs(root);
+    wtrie_compute_freq(root);
 
     uint64_t childcount = count_children(root);
     uint64_t leafcount  = count_leaves(root);
@@ -20,7 +20,7 @@ int main(int argc, char **argv) {
     }
 
     if (argc > 2) {
-        wtrie_t *child = find_entry(root,argv[2]);
+        wtrie_t *child = wtrie_find_entry(root,argv[2]);
         if (!child)
             printf("Search term %s not found\n", argv[2]);
         else
@@ -28,6 +28,6 @@ int main(int argc, char **argv) {
                    child->self_freq, child->children_freq);
     }
     
-    free_wordtrie(root);
+    wtrie_free(root);
     return 0;
 }

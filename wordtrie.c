@@ -5,18 +5,9 @@
 #include <string.h>
 #include <assert.h>
 
-extern inline bool valid_char(char c);
+extern inline bool wtrie_valid_char(char c);
 
-bool valid_key(const char* str) {
-    while (*str) {
-        if (!valid_char(*str))
-            return false;
-        str++;
-    }
-    return true;
-}
-
-wtrie_t* alloc_wordtrie() {
+wtrie_t* wtrie_alloc() {
     wtrie_t *n = malloc(sizeof(wtrie_t));
     assert(n != NULL);
     tagptr_t no_children = { .ptr = NULL };
@@ -26,17 +17,17 @@ wtrie_t* alloc_wordtrie() {
     return n;
 }
 
-void add_entry(wtrie_t *root, char *key, uint64_t freq) {
+void wtrie_add_entry(wtrie_t *root, char *key, uint64_t freq) {
     char k = *key;
     if (k) {
         /* Not done: recurse, constructing nodes as needed. */
         tagptr_t child = tagarray_search(root->child_arr, k);
         if (!child.ptr) {
-            child.ptr = alloc_wordtrie();
+            child.ptr = wtrie_alloc();
             set_tag(&child, k);
             tagarray_insert(&(root->child_arr), child);
         }
-        add_entry((wtrie_t*)mask_ptr(child), key+1, freq);
+        wtrie_add_entry((wtrie_t*)mask_ptr(child), key+1, freq);
     } else {
         /* If we're at the end of the key string, then root is 
          * actually the leaf for the given key. */
@@ -45,22 +36,22 @@ void add_entry(wtrie_t *root, char *key, uint64_t freq) {
     }
 }
 
-wtrie_t* find_entry(wtrie_t *root, char *key) {
+wtrie_t* wtrie_find_entry(wtrie_t *root, char *key) {
     if (!(*key))
         return root;
     else {
         tagptr_t child = tagarray_search(root->child_arr, *key);
         if (child.ptr)
-            return find_entry((wtrie_t*)mask_ptr(child),key+1);
+            return wtrie_find_entry((wtrie_t*)mask_ptr(child),key+1);
         else
             return NULL;
     }
 }
 
-void compute_children_freqs(wtrie_t *root) {
+void wtrie_compute_freq(wtrie_t *root) {
     for (int i = 0; i < tagarray_size(root->child_arr); ++i) {
         wtrie_t *child = (wtrie_t*)mask_ptr(tagarray_at(root->child_arr, i));
-        compute_children_freqs(child);
+        wtrie_compute_freq(child);
         root->children_freq += child->self_freq;
         root->children_freq += child->children_freq;
     }
@@ -99,10 +90,10 @@ uint64_t count_wasted_mem(wtrie_t *root) {
     return count;
 }
 
-void free_wordtrie(wtrie_t *root) {
+void wtrie_free(wtrie_t *root) {
     for (int i = 0; i < tagarray_size(root->child_arr); ++i) {
         wtrie_t *child = (wtrie_t*)mask_ptr(tagarray_at(root->child_arr, i));
-        free_wordtrie(child);
+        wtrie_free(child);
     }
     free((tagptr_t*)mask_ptr(root->child_arr));
     free(root);
