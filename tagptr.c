@@ -100,7 +100,7 @@ tagptr_t tagarray_search(tagptr_t arr, uint16_t search_tag) {
         } else if (mid_tag < search_tag) {
             l = mid + 1;
         } else {
-            r = mid - 1;
+            r = mid;
         }
     }
     tagptr_t not_found = { .ptr = NULL };
