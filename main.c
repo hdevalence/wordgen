@@ -10,10 +10,10 @@ int main(int argc, char **argv) {
     compute_children_freqs(root);
 
     uint64_t childcount = count_children(root);
-    uint64_t nullcount = count_null_leaves(root);
     printf("%llu child nodes\n", childcount);
-    printf("%llu null leaves = %llu wasted bytes\n",
-            nullcount, sizeof(void*)*nullcount);
+    if (childcount < 1000) {
+        wtrie_pprint(root);
+    }
 
     if (argc > 2) {
         wtrie_t *child = find_entry(root,argv[2]);

@@ -12,11 +12,13 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#include "tagptr.h"
+
 #define NUMCHARS 95
 
 struct wtrie_t {
-    // Array of children, possibly null (i.e., of type Maybe Node)
-    struct wtrie_t* children[NUMCHARS];
+    // Tagged pointer array of children
+    tagptr_t child_arr;
     // Frequency of this node's word
     uint64_t self_freq;
     // Sum of frequencies of all child nodes.
@@ -40,11 +42,6 @@ bool valid_key(const char* str);
 uint64_t count_children(wtrie_t *root);
 
 /*
- * Count number of null pointers to unused children.
- */
-uint64_t count_null_leaves(wtrie_t *root);
-
-/*
  * Add an entry to the trie.
  *
  * Warning: this function does not update the children_freqs
@@ -64,9 +61,10 @@ wtrie_t* find_entry(wtrie_t *root, char *key);
  */
 void compute_children_freqs(wtrie_t *root);
 
+void wtrie_pprint(wtrie_t *root);
+
 wtrie_t* alloc_wordtrie();
 void free_wordtrie(wtrie_t *root);
-
 
 #endif
 
