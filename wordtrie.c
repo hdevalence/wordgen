@@ -27,20 +27,21 @@ wtrie_t* alloc_wordtrie() {
 }
 
 void add_entry(wtrie_t *root, char *key, uint64_t freq) {
-    if (!(*key)) {
+    char k = *key;
+    if (k) {
+        /* Not done: recurse, constructing nodes as needed. */
+        tagptr_t child = tagarray_search(root->child_arr, k);
+        if (!child.ptr) {
+            child.ptr = alloc_wordtrie();
+            set_tag(&child, k);
+            tagarray_insert(&(root->child_arr), child);
+        }
+        add_entry((wtrie_t*)mask_ptr(child), key+1, freq);
+    } else {
         /* If we're at the end of the key string, then root is 
          * actually the leaf for the given key. */
         root->self_freq += freq;
         return;
-    } else {
-        /* Otherwise, recurse, constructing nodes as needed. */
-        tagptr_t child = tagarray_search(root->child_arr, *key);
-        if (!child.ptr) {
-            child.ptr = alloc_wordtrie();
-            set_tag(&child, *key);
-            tagarray_insert(&(root->child_arr), child);
-        }
-        add_entry((wtrie_t*)mask_ptr(child), key+1, freq);
     }
 }
 
