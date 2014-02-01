@@ -10,7 +10,11 @@ int main(int argc, char **argv) {
     compute_children_freqs(root);
 
     uint64_t childcount = count_children(root);
+    uint64_t leafcount  = count_leaves(root);
+    uint64_t wastecount = count_wasted_mem(root);
     printf("%llu child nodes\n", childcount);
+    printf("%llu leaf nodes\n", leafcount);
+    printf("%llu wasted bytes\n", wastecount);
     if (childcount < 1000) {
         wtrie_pprint(root);
     }

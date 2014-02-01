@@ -40,6 +40,8 @@ bool valid_key(const char* str);
  * Count number of nodes in trie.
  */
 uint64_t count_children(wtrie_t *root);
+uint64_t count_leaves(wtrie_t *root);
+uint64_t count_wasted_mem(wtrie_t *root);
 
 /*
  * Add an entry to the trie.

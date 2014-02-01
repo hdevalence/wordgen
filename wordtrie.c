@@ -65,11 +65,35 @@ void compute_children_freqs(wtrie_t *root) {
     }
 }
 
+// FIXME: code duplication
+// it'd be good to add some functional traversals
+
+uint64_t count_leaves(wtrie_t *root) {
+    int numchildren = tagarray_size(root->child_arr);
+    if (numchildren == 0)
+        return  1; // This is a leaf
+    uint64_t count = 0;
+    for (int i = 0; i < numchildren; ++i) {
+        wtrie_t *child = (wtrie_t*)mask_ptr(tagarray_at(root->child_arr, i));
+        count += count_leaves(child);
+    }
+    return count;
+}
+
 uint64_t count_children(wtrie_t *root) {
     uint64_t count = 1;
     for (int i = 0; i < tagarray_size(root->child_arr); ++i) {
         wtrie_t *child = (wtrie_t*)mask_ptr(tagarray_at(root->child_arr, i));
         count += count_children(child);
+    }
+    return count;
+}
+
+uint64_t count_wasted_mem(wtrie_t *root) {
+    uint64_t count = sizeof(tagptr_t*)*(root->child_arr.bytes[6] - root->child_arr.bytes[7]);
+    for (int i = 0; i < tagarray_size(root->child_arr); ++i) {
+        wtrie_t *child = (wtrie_t*)mask_ptr(tagarray_at(root->child_arr, i));
+        count += count_wasted_mem(child);
     }
     return count;
 }
