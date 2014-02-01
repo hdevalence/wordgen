@@ -116,7 +116,7 @@ void wtrie_pprint_helper(wtrie_t *root, char *prefix) {
     for(int i = 0; i < tagarray_size(root->child_arr); ++i) {
         tagptr_t child = tagarray_at(root->child_arr,i);
         wtrie_t *rawchild = (wtrie_t*)mask_ptr(child);
-        printf("%s%c:  %llu  %llu\n",
+        printf("%s%c:  %lu  %lu\n",
                 prefix, (char)get_tag(child), rawchild->self_freq, rawchild->children_freq);
         wtrie_pprint_helper((wtrie_t*)mask_ptr(child),newprefix);
     }
@@ -124,7 +124,7 @@ void wtrie_pprint_helper(wtrie_t *root, char *prefix) {
 }
 
 void wtrie_pprint(wtrie_t *root) {
-    printf("self_freq = %llu    children_freqs = %llu\n", root->self_freq, root->children_freq);
+    printf("self_freq = %lu    children_freqs = %lu\n", root->self_freq, root->children_freq);
     char prefix = 0;
     wtrie_pprint_helper(root,&prefix);
 }

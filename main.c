@@ -12,9 +12,9 @@ int main(int argc, char **argv) {
     uint64_t childcount = count_children(root);
     uint64_t leafcount  = count_leaves(root);
     uint64_t wastecount = count_wasted_mem(root);
-    printf("%llu child nodes\n", childcount);
-    printf("%llu leaf nodes\n", leafcount);
-    printf("%llu wasted bytes\n", wastecount);
+    printf("%lu child nodes\n", childcount);
+    printf("%lu leaf nodes\n", leafcount);
+    printf("%lu wasted bytes\n", wastecount);
     if (childcount < 1000) {
         wtrie_pprint(root);
     }
@@ -24,7 +24,7 @@ int main(int argc, char **argv) {
         if (!child)
             printf("Search term %s not found\n", argv[2]);
         else
-            printf("%s: self %llu, children %llu\n", argv[2],
+            printf("%s: self %lu, children %lu\n", argv[2],
                    child->self_freq, child->children_freq);
     }
     

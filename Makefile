@@ -1,4 +1,4 @@
-CFLAGS?=-g -Wall -std=c99 -Wno-format
+CFLAGS?=-g -Wall -std=c99
 
 all: wordtrie tagtest
 
