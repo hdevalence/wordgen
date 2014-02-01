@@ -14,17 +14,28 @@ wtrie_t* build_trie(char *filepath) {
     FILE* fp = fopen(filepath,"r");
     if (fp == NULL)
         exit(EXIT_FAILURE);
-    char ngram[512];
     while ((read = getline(&line, &len, fp)) != -1) {
-        char *ngram_tok = strtok(line,"\t");
-        if (!valid_key(ngram_tok))
-            continue;
-        strncpy(ngram, ngram_tok, 512);
-        strtok(NULL,"\t"); // discard year
-        char *freq_tok = strtok(NULL,"\t");
-        uint64_t freq = strtoll(freq_tok,NULL,10);
-        //printf("%s\t\t%llu\n", ngram, freq);
-        add_entry(root,ngram,freq);
+        char *tab = line;
+        //scan for tab and check that all ngram chars are ascii
+        while (*tab != '\t') {
+            if (!valid_char(*tab))
+                goto nextline;
+            ++tab;
+        }
+        //now tab points to the delim after the ngram
+        *tab = 0; // N.B. this terminates line at the end of the ngram
+        while (*tab != '\t')
+            ++tab;
+        //now it points to the delim after the year field
+        //save the next char as the start of the frequency count
+        char *freqstr = tab + 1;
+        while (*tab != '\t')
+            ++tab;
+        //now it points to the delim after the frequency count
+        *tab = 0;
+        uint64_t freq = strtoull(freqstr,NULL,10);
+        add_entry(root,line,freq);
+        nextline: continue;
     }
     free(line);
     return root;

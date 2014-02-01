@@ -30,8 +30,7 @@ typedef struct wtrie_t wtrie_t;
  * Check if a character is a valid trie key.
  */
 inline bool valid_char(char c) {
-    char d = c - 32;
-    return (0 <= d && d <= 95);
+    return (32 <= c && c <= 127);
 }
 
 bool valid_key(const char* str);
