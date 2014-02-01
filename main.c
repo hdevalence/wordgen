@@ -20,7 +20,7 @@ int main(int argc, char **argv) {
         if (!child)
             printf("Search term %s not found\n", argv[2]);
         else
-            printf("%s: self %llu, children %llu", argv[2], 
+            printf("%s: self %llu, children %llu\n", argv[2],
                    child->self_freq, child->children_freq);
     }
     
