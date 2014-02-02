@@ -105,6 +105,10 @@ inline uint8_t tagarray_size(tagptr_t arr) {
     return arr.bytes[7];
 }
 
+inline uint8_t tagarray_reserved(tagptr_t arr) {
+    return arr.bytes[6];
+}
+
 /*
  * Pretty-print a tagged array for debugging.
  */

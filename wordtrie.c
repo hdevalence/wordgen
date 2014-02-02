@@ -85,7 +85,7 @@ uint64_t count_children(wtrie_t *root) {
 }
 
 uint64_t count_wasted_mem(wtrie_t *root) {
-    uint64_t count = sizeof(tagptr_t*)*(root->child_arr.bytes[6] - root->child_arr.bytes[7]);
+    uint64_t count = tagarray_reserved(root->child_arr) - tagarray_size(root->child_arr);
     for (int i = 0; i < tagarray_size(root->child_arr); ++i) {
         wtrie_t *child = (wtrie_t*)mask_ptr(tagarray_at(root->child_arr, i));
         count += count_wasted_mem(child);
