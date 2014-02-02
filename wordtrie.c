@@ -9,7 +9,10 @@ extern inline bool wtrie_valid_char(char c);
 
 wtrie_t* wtrie_alloc() {
     wtrie_t *n = malloc(sizeof(wtrie_t));
-    assert(n != NULL);
+    if (n == NULL) {
+        fprintf(stderr,"malloc failed\n");
+        exit(EXIT_FAILURE);
+    }
     tagptr_t no_children = { .ptr = NULL };
     n->child_arr = no_children;
     n->self_freq = 0;
