@@ -10,6 +10,8 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
+#include "util.h"
+
 wtrie_t* build_trie(char *filepath) {
     wtrie_t* root = wtrie_alloc();
     add_to_trie(root,filepath);
@@ -73,6 +75,7 @@ void add_to_trie(wtrie_t *root, char *filepath) {
     char *data = mmap(NULL, statbuf.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
     if (data == MAP_FAILED) {
         fprintf(stderr, "Cannot mmap file %s", filepath);
+        exit(EXIT_FAILURE);
     }
 
     madvise(data, statbuf.st_size, MADV_SEQUENTIAL);

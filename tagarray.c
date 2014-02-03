@@ -25,7 +25,8 @@ void tagarray_push_back(tagptr_t* arr, tagptr_t p) {
         if (new_res == 0)
             new_res = 1;
         tagptr_t* new_arr = realloc(raw_arr, sizeof(tagptr_t)*new_res);
-        assert(new_arr);
+        if (!new_arr)
+            err_oom("tagarray_push_back()");
         arr->ptr = new_arr;
         arr->bytes[7] = size;
         arr->bytes[6] = new_res;
