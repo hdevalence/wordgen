@@ -19,6 +19,7 @@ int main(int argc, char **argv) {
     printf("Computing frequencies\n");
     wtrie_compute_freq(root);
 
+#ifdef DIAGNOSTICS
     uint64_t childcount = count_children(root);
     uint64_t leafcount  = count_leaves(root);
     uint64_t wastecount = count_wasted_mem(root);
@@ -34,6 +35,7 @@ int main(int argc, char **argv) {
     if (childcount < 1000) {
         wtrie_pprint(root);
     }
+#endif
 
     wtrie_t *child = wtrie_find_entry(root,argv[1]);
     if (!child)
