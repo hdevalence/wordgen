@@ -96,5 +96,8 @@ uint64_t count_leaves(wtrie_t *root);
  */
 uint64_t count_wasted_mem(wtrie_t *root);
 
+uint64_t count_array_sizes(wtrie_t *root, int size);
+uint64_t count_array_reserved(wtrie_t *root, int size);
+
 #endif
 

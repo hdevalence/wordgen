@@ -1,6 +1,8 @@
-#include "tagptr.h"
+#include <stdlib.h>
+#include <stdio.h>
 
-#include "stdlib.h"
+#include "tagptr.h"
+#include "tagarray.h"
 
 int main(int argc, char **argv) {
     tagptr_t arr;

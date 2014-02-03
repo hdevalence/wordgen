@@ -25,6 +25,12 @@ int main(int argc, char **argv) {
     printf("%lu child nodes\n", childcount);
     printf("%lu leaf nodes\n", leafcount);
     printf("%lu wasted bytes\n", wastecount);
+    for (int size = 0; size <= TAGARRAY_MAXLEN; ++size) {
+        uint64_t sizecount = count_array_sizes(root, size);
+        uint64_t rescount = count_array_reserved(root, size);
+        printf("size %d: sizecount %lu\trescount %lu\n", size, sizecount, rescount);
+    }
+
     if (childcount < 1000) {
         wtrie_pprint(root);
     }

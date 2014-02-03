@@ -5,6 +5,8 @@
 #include <string.h>
 #include <assert.h>
 
+#include "tagarray.h"
+
 extern inline bool wtrie_valid_char(char c);
 
 wtrie_t* wtrie_alloc() {
@@ -92,6 +94,29 @@ uint64_t count_wasted_mem(wtrie_t *root) {
     }
     return count;
 }
+
+uint64_t count_array_sizes(wtrie_t *root, int size) {
+    uint64_t count = 0;
+    if (size == tagarray_size(root->child_arr))
+        count = 1;
+    for (int i = 0; i < tagarray_size(root->child_arr); ++i) {
+        wtrie_t *child = (wtrie_t*)mask_ptr(tagarray_at(root->child_arr, i));
+        count += count_array_sizes(child, size);
+    }
+    return count;
+}
+
+uint64_t count_array_reserved(wtrie_t *root, int size) {
+    uint64_t count = 0;
+    if (size == tagarray_reserved(root->child_arr))
+        count = 1;
+    for (int i = 0; i < tagarray_size(root->child_arr); ++i) {
+        wtrie_t *child = (wtrie_t*)mask_ptr(tagarray_at(root->child_arr, i));
+        count += count_array_reserved(child, size);
+    }
+    return count;
+}
+
 
 void wtrie_free(wtrie_t *root) {
     for (int i = 0; i < tagarray_size(root->child_arr); ++i) {
