@@ -39,8 +39,12 @@ wtrie_t* wtrie_alloc();
 
 /*
  * Recursively free a tree.
+ *
+ * The arrays holding each node's children are held in memory pools.
+ * If all nodes will be deleted, it's faster to 'leak' the tag arrays,
+ * then free the pools they're allocated from in one go.
  */
-void wtrie_free(wtrie_t *root);
+void wtrie_free(wtrie_t *root, bool free_tag_arrays);
 
 /***********************************************************************
  *** Usage

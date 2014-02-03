@@ -27,7 +27,7 @@
  ***
  **/
 
-#define TAGARRAY_MAXLEN 95
+#define TAGARRAY_MAXLEN 128
 
 /*
  * Given a tagged pointer array arr, append p to the array.
@@ -75,5 +75,7 @@ inline uint8_t tagarray_reserved(tagptr_t arr) {
  * Pretty-print a tagged array for debugging.
  */
 void tagarray_pprint(tagptr_t arr);
+
+void tagarray_free(tagptr_t arr);
 
 #endif

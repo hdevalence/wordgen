@@ -117,12 +117,13 @@ uint64_t count_array_reserved(wtrie_t *root, int size) {
 }
 
 
-void wtrie_free(wtrie_t *root) {
+void wtrie_free(wtrie_t *root, bool free_tag_array) {
     for (int i = 0; i < tagarray_size(root->child_arr); ++i) {
         wtrie_t *child = (wtrie_t*)mask_ptr(tagarray_at(root->child_arr, i));
-        wtrie_free(child);
+        wtrie_free(child, free_tag_array);
     }
-    free((tagptr_t*)mask_ptr(root->child_arr));
+    if (free_tag_array)
+        tagarray_free(root->child_arr);
     free(root);
 }
 

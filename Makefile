@@ -8,9 +8,9 @@ download:
 	unzip data.zip; \
 	rm data.zip
 
-wordtrie: main.o wordtrie.o gngrams.o tagptr.o tagarray.o util.o
+wordtrie: main.o wordtrie.o gngrams.o tagptr.o tagarray.o util.o mempool.o
 
-tagtest: tagtest.o tagptr.o tagarray.o util.o
+tagtest: tagtest.o tagptr.o tagarray.o util.o mempool.o
 
 clean:
 	rm -f *.o

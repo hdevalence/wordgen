@@ -3,11 +3,23 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
+#include <string.h>
+
+#include "mempool.h"
 
 extern inline tagptr_t tagarray_at(tagptr_t arr, int i);
 extern inline void tagarray_set(tagptr_t arr, int i, tagptr_t obj);
 extern inline uint8_t tagarray_size(tagptr_t arr);
 extern inline uint8_t tagarray_reserved(tagptr_t arr);
+
+void tagarray_free(tagptr_t arr)
+{
+    uint8_t reserved = tagarray_reserved(arr);
+    if (reserved) {
+        tagptr_t *raw_arr = (tagptr_t*)mask_ptr(arr);
+        mempool_free(mempool(sizeof(tagptr_t)*reserved), raw_arr);
+    }
+}
 
 void tagarray_push_back(tagptr_t* arr, tagptr_t p) {
     uint8_t size = arr->bytes[7];
@@ -24,9 +36,12 @@ void tagarray_push_back(tagptr_t* arr, tagptr_t p) {
         }
         if (new_res == 0)
             new_res = 1;
-        tagptr_t* new_arr = realloc(raw_arr, sizeof(tagptr_t)*new_res);
-        if (!new_arr)
-            err_oom("tagarray_push_back()");
+        // Reallocate the array into a new memory pool
+        tagptr_t* new_arr = mempool_alloc(mempool(sizeof(tagptr_t)*new_res));
+        memcpy(new_arr, raw_arr, sizeof(tagptr_t)*reserved);
+        if (reserved)
+            mempool_free(mempool(sizeof(tagptr_t)*reserved), raw_arr);
+        // Update array tagpointer
         arr->ptr = new_arr;
         arr->bytes[7] = size;
         arr->bytes[6] = new_res;

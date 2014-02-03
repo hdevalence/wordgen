@@ -2,6 +2,7 @@
 
 #include "wordtrie.h"
 #include "gngrams.h"
+#include "mempool.h"
 
 int main(int argc, char **argv) {
     if (argc < 3) {
@@ -44,6 +45,7 @@ int main(int argc, char **argv) {
         printf("%s: self %lu, children %lu\n", argv[1],
                child->self_freq, child->children_freq);
 
-    wtrie_free(root);
+    wtrie_free(root, false);
+    mempool_free_globals();
     return 0;
 }
