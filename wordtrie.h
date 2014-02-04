@@ -38,13 +38,12 @@ typedef struct wtrie_t wtrie_t;
 wtrie_t* wtrie_alloc();
 
 /*
- * Recursively free a tree.
+ * Free all trie nodes over all tries. Also frees all tag arrays.
  *
- * The arrays holding each node's children are held in memory pools.
- * If all nodes will be deleted, it's faster to 'leak' the tag arrays,
- * then free the pools they're allocated from in one go.
+ * TODO: the global memory pool strategy is better for the current use,
+ * but it's much worse from a design point of view. Think of a better way.
  */
-void wtrie_free(wtrie_t *root, bool free_tag_arrays);
+void wtrie_free();
 
 /***********************************************************************
  *** Usage

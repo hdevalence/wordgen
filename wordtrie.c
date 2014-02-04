@@ -7,13 +7,18 @@
 
 #include "tagarray.h"
 #include "util.h"
+#include "mempool.h"
 
 extern inline bool wtrie_valid_char(char c);
 
+static mempool_t *wtrie_pool;
+
 wtrie_t* wtrie_alloc() {
-    wtrie_t *n = malloc(sizeof(wtrie_t));
-    if (n == NULL)
-        err_oom("wtrie_alloc()");
+    if (!wtrie_pool) {
+        // Create 96 MB pool: 24 * 2^22
+        wtrie_pool = create_mempool(sizeof(wtrie_t),(1 << 22));
+    }
+    wtrie_t *n = mempool_alloc(wtrie_pool);
     tagptr_t no_children = { .ptr = NULL };
     n->child_arr = no_children;
     n->self_freq = 0;
@@ -116,15 +121,9 @@ uint64_t count_array_reserved(wtrie_t *root, int size) {
     return count;
 }
 
-
-void wtrie_free(wtrie_t *root, bool free_tag_array) {
-    for (int i = 0; i < tagarray_size(root->child_arr); ++i) {
-        wtrie_t *child = (wtrie_t*)mask_ptr(tagarray_at(root->child_arr, i));
-        wtrie_free(child, free_tag_array);
-    }
-    if (free_tag_array)
-        tagarray_free(root->child_arr);
-    free(root);
+void wtrie_free() {
+    mempool_free_globals();
+    free_mempool(wtrie_pool);
 }
 
 void wtrie_pprint_helper(wtrie_t *root, char *prefix) {
