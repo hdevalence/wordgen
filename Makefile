@@ -1,4 +1,5 @@
-CFLAGS?=-g -Wall -std=c99
+CFLAGS?=-O0 -pipe
+CFLAGS+=-g -Wall -Wextra -Wpedantic -std=c99
 
 all: wordtrie tagtest
 
