@@ -1,10 +1,14 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "wordtrie.h"
 #include "gngrams.h"
 #include "mempool.h"
+#include "tagarray.h"
+#include "util.h"
 
 int main(int argc, char **argv) {
+    seedrand();
     if (argc < 3) {
         printf("Usage: wordtrie NGRAM dataset [dataset dataset...]\n");
         return 0;
@@ -44,6 +48,12 @@ int main(int argc, char **argv) {
     else
         printf("%s: self %lu, children %lu\n", argv[1],
                child->self_freq, child->children_freq);
+
+
+    char *sampled = wtrie_sample_string(root,NULL);
+    printf("Generated text %s\n", sampled);
+    sampled = wtrie_sample_string(root,argv[1]);
+    printf("Generated text %s\n", sampled);
 
     wtrie_free(root, false);
     mempool_free_globals();

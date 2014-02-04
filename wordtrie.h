@@ -14,7 +14,7 @@
 
 #include "tagptr.h"
 
-#define NUMCHARS 95
+#define NUMCHARS 96
 
 /*
  * self_freq is the frequency count for the string which is this node's key.
@@ -57,6 +57,16 @@ inline bool wtrie_valid_char(unsigned char c) {
     return (32 <= c && c <= 127);
 }
 
+/* Converts a printable ascii char to an index */
+inline unsigned char ascii_index(unsigned char c) {
+    return c - 32;
+}
+
+/* Converts an index to printable ascii */
+inline unsigned char index_ascii(unsigned char c) {
+    return c + 32;
+}
+
 /*
  * Add an entry to the trie.
  * Warning: this function does not update the children_freqs
@@ -74,6 +84,21 @@ wtrie_t* wtrie_find_entry(wtrie_t *root, char *key);
  * Compute child_freq totals.
  */
 void wtrie_compute_freq(wtrie_t *root);
+
+/*
+ * Sample from the children of root according to the frequency
+ * totals of the tree.
+ *
+ * If allowedchars is non-NULL, then perform the selection under
+ * the condition that the key for the selected child must be in the
+ * string allowedchars.
+ *
+ * A pointer to the selected child is stored in sampled_child;
+ * the pointer is NULL if we selected the child as a leaf node.
+ */
+char wtrie_sample(wtrie_t *root, char *allowedchars, wtrie_t **sampled_child);
+
+char *wtrie_sample_string(wtrie_t *root, char *allowedchars);
 
 /***********************************************************************
  *** Miscellaneous information functions

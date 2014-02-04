@@ -1,3 +1,5 @@
+// Needed for drand48()
+#define _XOPEN_SOURCE 600
 #include "wordtrie.h"
 
 #include <stdlib.h>
@@ -10,6 +12,8 @@
 #include "mempool.h"
 
 extern inline bool wtrie_valid_char(unsigned char c);
+extern inline unsigned char ascii_index(unsigned char c);
+extern inline unsigned char index_ascii(unsigned char c);
 
 static mempool_t *wtrie_pool;
 
@@ -64,6 +68,59 @@ void wtrie_compute_freq(wtrie_t *root) {
         root->children_freq += child->self_freq;
         root->children_freq += child->children_freq;
     }
+}
+
+char wtrie_sample_one(wtrie_t *root, char *allowed_chars, wtrie_t **sampled_child) {
+    /* Initialize arrays to hold conditional distributions.
+     * Note that we are sampling from
+     * (children \cap allowed) x {stop_string, continue_string};
+     * in other words, when we select a child node we need to know if we're
+     * actually selecting it as a leaf node or as an intermediate on
+     * the path to some other leaf.
+     */
+    double child_freqs[NUMCHARS];
+    double self_freqs[NUMCHARS];
+    for (int i = 0; i < NUMCHARS; ++i) {
+        child_freqs[i] = 0;
+        self_freqs[i] = 0;
+    }
+    /* Add children of *root to the probability distributions,
+     * if their keys are in the allowed set */
+    for (int i = 0; i < tagarray_size(root->child_arr); ++i) {
+        tagptr_t child = tagarray_at(root->child_arr, i);
+        wtrie_t *child_ptr = (wtrie_t*)mask_ptr(child);
+        char key = get_tag(child);
+        if (in_string(key,allowed_chars)) {
+            child_freqs[ascii_index(key)] = child_ptr->children_freq;
+            self_freqs[ascii_index(key)] = child_ptr->self_freq;
+        }
+    }
+    /* Select whether to select as a leaf node or an internal node */
+    double child_sum = sum(NUMCHARS, child_freqs);
+    double self_sum = sum(NUMCHARS, self_freqs);
+    char key;
+    if ((self_sum+child_sum)*drand48() <= child_sum) {
+        key = index_ascii(random_sample(NUMCHARS, child_sum, child_freqs));
+        *sampled_child = (wtrie_t*)mask_ptr(tagarray_search(root->child_arr, key));
+    } else {
+        key = index_ascii(random_sample(NUMCHARS, self_sum, self_freqs));
+        *sampled_child = NULL;
+    }
+    return key;
+}
+
+char *wtrie_sample_string(wtrie_t *root, char *allowed_chars) {
+    #define SAMPLESTR_MAXLEN 512
+    char *result = malloc(SAMPLESTR_MAXLEN);
+    memset(result, 0, SAMPLESTR_MAXLEN);
+    for (int i = 0; i < SAMPLESTR_MAXLEN; ++i) {
+        wtrie_t *sampled_child = NULL;
+        result[i] = wtrie_sample_one(root, allowed_chars, &sampled_child);
+        if (!sampled_child)
+            break;
+        root = sampled_child;
+    }
+    return result;
 }
 
 // FIXME: code duplication
