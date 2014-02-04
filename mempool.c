@@ -32,7 +32,9 @@ void mempool_free_globals()
 }
 
 mempool_t *create_mempool(size_t alloc_size, size_t pool_size) {
+#ifdef DIAGNOSTICS
     printf("creating mempool alloc size %lu pool size %lu\n", alloc_size, pool_size);
+#endif
     mempool_t *pool = malloc(sizeof(mempool_t));
     if (!pool)
         err_oom("mempool_create");
