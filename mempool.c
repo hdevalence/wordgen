@@ -87,10 +87,10 @@ void *mempool_alloc(mempool_t *pool)
 
 void mempool_free(mempool_t *pool, void *ptr) {
     /* Check if the pointer is in this pool */
-    if (pool->mem_start <= ptr && ptr <= pool->mem_end) {
+    if (pool->mem_start <= (char*)ptr && (char*)ptr <= pool->mem_end) {
         if (pool->free_spots_size == pool->free_spots_res) {
-            size_t new_size = 2*sizeof(void*)*pool->free_spots_res;
-            void **new_arr = realloc(pool->free_spots, new_size);
+            size_t new_size = 2*sizeof(char*)*pool->free_spots_res;
+            char **new_arr = realloc(pool->free_spots, new_size);
             if (!new_arr)
                 err_oom("mempool_free");
             pool->free_spots = new_arr;
@@ -100,7 +100,8 @@ void mempool_free(mempool_t *pool, void *ptr) {
         pool->free_spots_size++;
         return;
     } else if (pool->next) {
-        return mempool_free(pool->next, ptr);
+        mempool_free(pool->next, ptr);
+        return;
     } else {
         fprintf(stderr, "tried to mempool_free a pointer not in the memory pool!\n");
         exit(EXIT_FAILURE);

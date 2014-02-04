@@ -9,7 +9,7 @@
 #include "util.h"
 #include "mempool.h"
 
-extern inline bool wtrie_valid_char(char c);
+extern inline bool wtrie_valid_char(unsigned char c);
 
 static mempool_t *wtrie_pool;
 

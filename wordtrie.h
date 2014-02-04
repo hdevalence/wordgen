@@ -53,7 +53,7 @@ void wtrie_free();
  * Check if a character is a valid trie key.
  * For now, we limit characters to printable ASCII.
  */
-inline bool wtrie_valid_char(char c) {
+inline bool wtrie_valid_char(unsigned char c) {
     return (32 <= c && c <= 127);
 }
 

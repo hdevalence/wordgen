@@ -9,10 +9,10 @@
 
 struct mempool_t {
     struct mempool_t *next;
-    void *mem_start;
-    void *mem_end;
-    void *alloc_ptr;
-    void **free_spots;
+    char *mem_start;
+    char *mem_end;
+    char *alloc_ptr;
+    char **free_spots;
     size_t alloc_size;
     size_t pool_size;
     size_t free_spots_size;

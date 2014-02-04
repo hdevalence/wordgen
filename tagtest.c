@@ -4,7 +4,7 @@
 #include "tagptr.h"
 #include "tagarray.h"
 
-int main(int argc, char **argv) {
+int main() {
     tagptr_t arr;
     arr.ptr = NULL;
     tagarray_pprint(arr);
