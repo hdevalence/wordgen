@@ -9,14 +9,14 @@
 
 int main(int argc, char **argv) {
     seedrand();
-    if (argc < 3) {
-        printf("Usage: wordtrie NGRAM dataset [dataset dataset...]\n");
+    if (argc < 4) {
+        printf("Usage: wordtrie outfile NGRAM dataset [dataset dataset...]\n");
         return 0;
     }
 
     printf("Building trie\n");
     wtrie_t *root = wtrie_alloc();
-    for (int i=2; i < argc; ++i) {
+    for (int i=3; i < argc; ++i) {
         printf("Loading %s\n", argv[i]);
         add_to_trie(root, argv[i]);
     }
@@ -41,18 +41,23 @@ int main(int argc, char **argv) {
         wtrie_pprint(root);
     }
 #endif
+    printf("Writing file to %s...\n", argv[1]);
+    FILE *output = fopen(argv[1],"w");
+    wtrie_serialize(root,output);
+    fclose(output);
+    printf("Done.\n");
 
-    wtrie_t *child = wtrie_find_entry(root,argv[1]);
+    wtrie_t *child = wtrie_find_entry(root,argv[2]);
     if (!child)
-        printf("Search term %s not found\n", argv[1]);
+        printf("Search term %s not found\n", argv[2]);
     else
-        printf("%s: self %lu, children %lu\n", argv[1],
+        printf("%s: self %lu, children %lu\n", argv[2],
                child->self_freq, child->children_freq);
 
 
     char *sampled = wtrie_sample_string(root,NULL);
     printf("Generated text %s\n", sampled);
-    sampled = wtrie_sample_string(root,argv[1]);
+    sampled = wtrie_sample_string(root,argv[2]);
     printf("Generated text %s\n", sampled);
 
     wtrie_free(root, false);

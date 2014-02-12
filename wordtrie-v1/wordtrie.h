@@ -9,6 +9,7 @@
 #ifndef WORDTRIE_H
 #define WORDTRIE_H
 
+#include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
 
@@ -127,5 +128,7 @@ uint64_t count_wasted_mem(wtrie_t *root);
 uint64_t count_array_sizes(wtrie_t *root, int size);
 uint64_t count_array_reserved(wtrie_t *root, int size);
 
+void wtrie_serialize(wtrie_t *root, FILE *stream);
+wtrie_t *wtrie_load(FILE *stream);
 #endif
 

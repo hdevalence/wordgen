@@ -123,6 +123,71 @@ char *wtrie_sample_string(wtrie_t *root, char *allowed_chars) {
     return result;
 }
 
+long wtrie_serialize_helper(wtrie_t *root, FILE *stream) {
+    long child_pos[NUMCHARS];
+    for (int i = 0; i < NUMCHARS; ++i)
+        child_pos[i] = 0;
+    int numchildren = tagarray_size(root->child_arr);
+    for (int i = 0; i < numchildren; ++i) {
+        tagptr_t child = tagarray_at(root->child_arr, i);
+        int child_index = ascii_index(get_tag(child));
+        child_pos[child_index] = wtrie_serialize_helper((wtrie_t*)mask_ptr(child), stream);
+    }
+    long self_pos = ftell(stream);
+    put_base128(root->self_freq, stream);
+    put_base128(root->children_freq, stream);
+    for (int i = 0; i < numchildren; ++i) {
+        tagptr_t child = tagarray_at(root->child_arr, i);
+        uint8_t key = get_tag(child);
+        uint64_t byte_delta = self_pos - child_pos[ascii_index(key)];
+        fputc(key, stream);
+        put_base128(byte_delta, stream);
+    }
+    if (numchildren > 0)
+        fputc(0,stream);
+    return self_pos;
+}
+
+void wtrie_serialize(wtrie_t *root, FILE *stream) {
+    fseek(stream, 8, SEEK_SET);
+    uint64_t root_offset = wtrie_serialize_helper(root,stream);
+    rewind(stream);
+    fwrite(&root_offset,sizeof(uint64_t),1,stream);
+    return;
+}
+
+wtrie_t *wtrie_load_helper(FILE *stream) {
+    long current_node = ftell(stream);
+    wtrie_t *node = wtrie_alloc();
+    node->self_freq = get_base128(stream);
+    node->children_freq = get_base128(stream);
+    if (node->children_freq == 0)
+        return node;
+    uint8_t key = fgetc(stream);
+    while (key != 0) {
+        long child_offset = (long)get_base128(stream);
+        long cur_pos = ftell(stream);
+        // Seek to child position and load the child node
+        fseek(stream, current_node-child_offset, SEEK_SET);
+        wtrie_t *child_raw = wtrie_load_helper(stream);
+        // Add child node to this node's children
+        tagptr_t child = { .ptr = child_raw };
+        set_tag(&child, key);
+        tagarray_insert(&(node->child_arr), child);
+        // Reset stream to saved position and load next key
+        fseek(stream, cur_pos, SEEK_SET);
+        key = fgetc(stream);
+    }
+    return node;
+}
+
+wtrie_t *wtrie_load(FILE *stream) {
+    uint64_t root_offset = 0;
+    fread(&root_offset, sizeof(uint64_t), 1, stream);
+    fseek(stream, root_offset, SEEK_SET);
+    return wtrie_load_helper(stream);
+}
+
 // FIXME: code duplication
 // it'd be good to add some functional traversals
 

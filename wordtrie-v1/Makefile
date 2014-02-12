@@ -1,7 +1,7 @@
 CFLAGS?=-O0 -pipe
 CFLAGS+=-g -Wall -Wextra -Wpedantic -std=c99
 
-all: wordtrie tagtest
+all: wordtrie tagtest print_wtrie
 
 download:
 	echo "Downloading data sample..."; \
@@ -10,6 +10,8 @@ download:
 	rm data.zip
 
 wordtrie: main.o wordtrie.o gngrams.o tagptr.o tagarray.o util.o mempool.o
+
+print_wtrie: print_wtrie.o mempool.o tagptr.o tagarray.o util.o wordtrie.o
 
 tagtest: tagtest.o tagptr.o tagarray.o util.o mempool.o
 

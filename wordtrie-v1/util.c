@@ -27,3 +27,36 @@ int random_sample(int arraylen, double arraysum, double *array) {
     return arraylen-1;
 }
 
+extern inline uint8_t base128_digit(uint64_t val, int i);
+
+void put_base128(uint64_t val, FILE *stream)
+{
+    uint8_t digit = base128_digit(val,0);
+    /* Loops until we finish writing */
+    for(int i = 0; ; ++i) {
+        uint8_t next_digit = base128_digit(val,i+1);
+        /* If there's more data, set flag bit and continue. */
+        if (next_digit != 0) {
+            digit |= 128;
+            fputc(digit, stream);
+            digit = next_digit;
+        } else {
+            fputc(digit, stream);
+            return;
+        }
+    }
+}
+
+uint64_t get_base128(FILE *stream)
+{
+    uint64_t val = 0;
+    for(int i = 0; ; ++i) {
+        uint8_t digit = fgetc(stream);
+        val |= (digit & 127) << 7*i;
+        if (!(digit & 128))
+            break;
+    }
+    return val;
+}
+
+
