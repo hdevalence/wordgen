@@ -1,0 +1,63 @@
+0000000  45	uint64_t (little endian) with byte offset to root node
+0000001   0	
+0000002   0	
+0000003   0	
+0000004   0	
+0000005   0	
+0000006   0	
+0000007   0	
+
+0000008  27	node 'dog' self_freq
+0000009   0	node 'dog' children_freq
+
+0000010 129	node 'door' self_freq, value 1 = (129 & 127)
+0000011   1	node 'door' self_freq, value 128 = (1 << 7)
+0000012   0	node 'door' children_freq
+
+0000013   0	node 'doo' self_freq
+0000014 129	node 'doo' children_freq, value 1 = (129 & 127)
+0000015   1	node 'doo' children_freq, value 128 = (1 << 7)
+0000016 114		key 'r'
+0000017   3		byte offset to 'door' from beginning of 'doo'
+0000018   0	node terminator
+
+0000019  12	node 'do' self_freq
+0000020 156	node 'do' children_freq, value 28 = (156 & 127)
+0000021   1	node 'do' children_freq, value 128 = (1 << 7)
+0000022 103		key 'g'
+0000023  11		byte offset to 'dog' from beginning of 'do'
+0000024 111		key 'o'
+0000025   6		byte offset to 'doo' from beginning of 'do'
+0000026   0	node terminator
+
+0000027   0	node 'd' self_freq
+0000028 168	node 'd' children_freq, value 40 = (168 & 127)
+0000029   1	node 'd' children_freq, value 128 = (1 << 7)
+0000030 111		key 'o'
+0000031   8		byte offset to 'do' from beginning of 'd'
+0000032   0	node terminator
+
+0000033   9	node 'eat' self_freq
+0000034   0	node 'eat' children_freq
+
+0000035   0	node 'ea' self_freq
+0000036   9	node 'ea' children_freq
+0000037 116		key 't'
+0000038   2		byte offset to 'eat' from beginning of 'ea'
+0000039   0	node terminator
+
+0000040   0	node 'e' self_freq
+0000041   9	node 'e' children_freq
+0000042  97		key 'a'
+0000043   5		byte offset to 'ea' from beginning of 'e'
+0000044   0	node terminator
+
+0000045   0	node '' self_freq
+0000046 177	node '' children_freq, value 49 = (177 & 128)
+0000047   1	node '' children_freq, value 128 = (1 << 7)
+0000048 100		key 'd'
+0000049  18		byte offset to 'd' from beginning of ''
+0000050 101		key 'e'
+0000051   5		byte offset to 'e' from beginning of ''
+0000052   0	node terminator
+0000053
