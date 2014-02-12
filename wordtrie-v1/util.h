@@ -43,6 +43,17 @@ inline double sum(int count, double *restrict arr) {
     return s;
 }
 
+// Number of digits of base 128 representation of val
+inline int base128_count(uint64_t val) {
+    // return ceil(lg(val) / 7)
+    int lg = 63 - __builtin_clzl(val);
+    int q = lg / 7;
+    if (7*q == lg)
+        return q;
+    else
+        return q+1;
+}
+
 // i-th digit of base 128 representation of val
 inline uint8_t base128_digit(uint64_t val, int i) {
     return ((val >> 7*i) & 127);

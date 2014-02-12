@@ -124,18 +124,34 @@ char *wtrie_sample_string(wtrie_t *root, char *allowed_chars) {
 }
 
 long wtrie_serialize_helper(wtrie_t *root, FILE *stream) {
+    /* Array of positions of child nodes */
     long child_pos[NUMCHARS];
     for (int i = 0; i < NUMCHARS; ++i)
         child_pos[i] = 0;
     int numchildren = tagarray_size(root->child_arr);
+    /* Serialize children depth-first */
     for (int i = 0; i < numchildren; ++i) {
         tagptr_t child = tagarray_at(root->child_arr, i);
         int child_index = ascii_index(get_tag(child));
         child_pos[child_index] = wtrie_serialize_helper((wtrie_t*)mask_ptr(child), stream);
     }
+    /* Save position of this node for computing offsets */
     long self_pos = ftell(stream);
+    /* Serialize this node's data */
     put_base128(root->self_freq, stream);
     put_base128(root->children_freq, stream);
+    /* If we have no children, skip writing index structure. */
+    if (numchildren == 0)
+        return self_pos;
+    /* Count byte size of index structure */
+    uint64_t index_size = 0;
+    for (int i = 0; i < numchildren; ++i) {
+        uint8_t key = get_tag(tagarray_at(root->child_arr, i));
+        uint64_t byte_delta = self_pos - child_pos[ascii_index(key)];
+        index_size += base128_count(byte_delta) + 1; // length of offset + length of key
+    }
+    /* Write index structure */
+    put_base128(index_size, stream);
     for (int i = 0; i < numchildren; ++i) {
         tagptr_t child = tagarray_at(root->child_arr, i);
         uint8_t key = get_tag(child);
@@ -143,8 +159,6 @@ long wtrie_serialize_helper(wtrie_t *root, FILE *stream) {
         fputc(key, stream);
         put_base128(byte_delta, stream);
     }
-    if (numchildren > 0)
-        fputc(0,stream);
     return self_pos;
 }
 
@@ -163,10 +177,16 @@ wtrie_t *wtrie_load_helper(FILE *stream) {
     node->children_freq = get_base128(stream);
     if (node->children_freq == 0)
         return node;
-    uint8_t key = fgetc(stream);
-    while (key != 0) {
+    long index_size = (long)get_base128(stream);
+    long cur_pos = ftell(stream);
+    long index_start = cur_pos;
+    printf("index size %lu , current pos %lu\n", index_size, cur_pos);
+    while (cur_pos < index_start + index_size) {
+        /* Read key, offset from stream */
+        uint8_t key = fgetc(stream);
         long child_offset = (long)get_base128(stream);
-        long cur_pos = ftell(stream);
+        cur_pos = ftell(stream);
+
         // Seek to child position and load the child node
         fseek(stream, current_node-child_offset, SEEK_SET);
         wtrie_t *child_raw = wtrie_load_helper(stream);
@@ -174,9 +194,9 @@ wtrie_t *wtrie_load_helper(FILE *stream) {
         tagptr_t child = { .ptr = child_raw };
         set_tag(&child, key);
         tagarray_insert(&(node->child_arr), child);
-        // Reset stream to saved position and load next key
+
+        // Reset stream to current position after loading children
         fseek(stream, cur_pos, SEEK_SET);
-        key = fgetc(stream);
     }
     return node;
 }

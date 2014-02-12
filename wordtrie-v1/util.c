@@ -27,6 +27,8 @@ int random_sample(int arraylen, double arraysum, double *array) {
     return arraylen-1;
 }
 
+extern inline int base128_count(uint64_t val);
+
 extern inline uint8_t base128_digit(uint64_t val, int i);
 
 void put_base128(uint64_t val, FILE *stream)
